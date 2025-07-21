@@ -72,3 +72,4 @@ npm start
 2. **FastAPI** による高速API開発  
 3. **React** によるモダンフロントエンド
 4. **Docker Compose** によるマルチサービス管理# Test_Devcontainer_Build
+# Test_Devcontainer_Build
