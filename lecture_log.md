@@ -441,7 +441,7 @@ node --version    # → v18.x.x
 cd /workspace/backend
 
 # FastAPI サーバーを起動  
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 成功時の表示例：
