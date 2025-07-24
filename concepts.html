@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本概念編 - DevContainer完全ガイド</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 基本概念編専用スタイル */
+        .concept-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:hover {
+            box-shadow: 0 8px 25px var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .concept-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .concept-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .concept-title {
+            font-size: 1.8rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .concept-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .visual-diagram {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .diagram-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .diagram-box {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .diagram-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .quiz-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .quiz-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quiz-option {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-option:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quiz-option.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .quiz-option.incorrect {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+
+        .progress-checklist {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .checklist-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .checklist-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .breadcrumb {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb-list {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .breadcrumb-item {
+            color: var(--text-light);
+        }
+
+        .breadcrumb-item.current {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .breadcrumb-separator {
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-lightbulb"></i> 基本概念編</h1>
+            <p>Docker・WSL2・DevContainerの基礎知識を学習しましょう</p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">ホーム</a></li>
+                    <li class="breadcrumb-separator">></li>
+                    <li class="breadcrumb-item current">基本概念編</li>
+                </ol>
+            </nav>
+
+            <!-- 進捗チェックリスト -->
+            <section class="progress-checklist">
+                <h2><i class="fas fa-tasks"></i> 学習チェックリスト</h2>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" data-concept="docker"></div>
+                    <span>Dockerの基本概念と利点を理解する</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" data-concept="wsl2"></div>
+                    <span>WSL2の役割とWindows開発での重要性を理解する</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" data-concept="devcontainer"></div>
+                    <span>DevContainerの概念と開発効率向上の仕組みを理解する</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" data-concept="integration"></div>
+                    <span>3つの技術の関係性と統合メリットを理解する</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" data-concept="workflow"></div>
+                    <span>実際の開発ワークフローをイメージできる</span>
+                </div>
+            </section>
+
+            <!-- Docker概念 -->
+            <section class="concept-card">
+                <div class="concept-header">
+                    <div class="concept-icon">
+                        <i class="fab fa-docker"></i>
+                    </div>
+                    <div>
+                        <h2 class="concept-title">Docker（ドッカー）</h2>
+                        <p class="concept-subtitle">アプリケーションを軽量な仮想環境で動かす技術</p>
+                    </div>
+                </div>
+
+                <div class="concept-content">
+                    <h3><i class="fas fa-question-circle"></i> Dockerとは？</h3>
+                    <p>Dockerは、アプリケーションを「コンテナ」という軽量な仮想環境で動かす技術です。コンテナには、アプリケーションの実行に必要なすべて（コード、ライブラリ、設定など）が含まれており、<strong>「どの環境でも同じように動く」</strong>を実現します。</p>
+
+                    <h3><i class="fas fa-lightbulb"></i> なぜDockerが必要？</h3>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>従来の開発</th>
+                                    <th>Dockerを使った開発</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>「私の環境では動くんですが...」</td>
+                                    <td>全員が同じ環境で開発</td>
+                                </tr>
+                                <tr>
+                                    <td>新メンバーの環境構築に数日</td>
+                                    <td>数分で開発環境が完成</td>
+                                </tr>
+                                <tr>
+                                    <td>ライブラリのバージョン衝突</td>
+                                    <td>プロジェクト毎に独立した環境</td>
+                                </tr>
+                                <tr>
+                                    <td>本番環境との違いによるトラブル</td>
+                                    <td>開発・本番で同じ環境</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i class="fas fa-example"></i> 身近な例え</h3>
+                    <p>Dockerコンテナは「引っ越し用のコンテナ」のようなものです。家具（アプリケーション）を運ぶ時、コンテナに入れれば世界中どこでも同じ状態で運べます。開発環境も同じで、一度コンテナに入れればどのPCでも同じように動作します。</p>
+                </div>
+            </section>
+
+            <!-- WSL2概念 -->
+            <section class="concept-card">
+                <div class="concept-header">
+                    <div class="concept-icon">
+                        <i class="fab fa-linux"></i>
+                    </div>
+                    <div>
+                        <h2 class="concept-title">WSL2</h2>
+                        <p class="concept-subtitle">Windows上でLinux環境を動かす仕組み</p>
+                    </div>
+                </div>
+
+                <div class="concept-content">
+                    <h3><i class="fas fa-question-circle"></i> WSL2とは？</h3>
+                    <p>WSL2（Windows Subsystem for Linux 2）は、Windows上でLinux環境を高速で動かす仕組みです。WindowsでもLinuxのコマンドやツールが使えるようになり、開発で必要な多くのツールが利用可能になります。</p>
+
+                    <h3><i class="fas fa-rocket"></i> WSL2の利点</h3>
+                    <ul>
+                        <li><strong>高速なファイルシステム</strong>：従来のWSLより大幅に高速化</li>
+                        <li><strong>完全なLinux互換性</strong>：実際のLinuxカーネルを使用</li>
+                        <li><strong>Dockerとの親和性</strong>：Docker Desktopが効率的に動作</li>
+                        <li><strong>開発ツールの豊富さ</strong>：Linux用の開発ツールがすべて使用可能</li>
+                    </ul>
+
+                    <h3><i class="fas fa-cogs"></i> WSL2の仕組み</h3>
+                    <div class="visual-diagram">
+                        <div class="diagram-row">
+                            <div class="diagram-box">Windows 11</div>
+                            <div class="diagram-arrow">内包</div>
+                            <div class="diagram-box">WSL2</div>
+                            <div class="diagram-arrow">実行</div>
+                            <div class="diagram-box">Linux環境</div>
+                        </div>
+                        <p>Windows内でLinuxが軽量な仮想マシンとして動作します</p>
+                    </div>
+
+                    <h3><i class="fas fa-code"></i> 実際の使用例</h3>
+                    <div class="code-example">
+                        <pre><code># WSL2でLinuxコマンドを実行
+$ ls -la
+$ python --version
+$ node --version
+$ docker ps</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DevContainer概念 -->
+            <section class="concept-card">
+                <div class="concept-header">
+                    <div class="concept-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <div>
+                        <h2 class="concept-title">DevContainer</h2>
+                        <p class="concept-subtitle">VS Codeで使える開発用コンテナ</p>
+                    </div>
+                </div>
+
+                <div class="concept-content">
+                    <h3><i class="fas fa-question-circle"></i> DevContainerとは？</h3>
+                    <p>DevContainerは、VS Codeで使える開発用コンテナ機能です。プロジェクトごとに独立した開発環境を作成し、チーム全員が同じ環境で開発できます。設定ファイル一つで、必要なツール、拡張機能、設定がすべて自動で準備されます。</p>
+
+                    <h3><i class="fas fa-magic"></i> DevContainerの魔法</h3>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>従来の環境構築</th>
+                                    <th>DevContainer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Python 3.11をインストール</td>
+                                    <td rowspan="5">VS Codeを開くだけで<br>すべて自動準備完了！</td>
+                                </tr>
+                                <tr>
+                                    <td>Node.js 18をインストール</td>
+                                </tr>
+                                <tr>
+                                    <td>VS Code拡張機能を手動インストール</td>
+                                </tr>
+                                <tr>
+                                    <td>ライブラリを個別にインストール</td>
+                                </tr>
+                                <tr>
+                                    <td>設定ファイルを手動で作成</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i class="fas fa-users"></i> チーム開発での威力</h3>
+                    <ul>
+                        <li><strong>環境の統一</strong>：全員が同じ開発環境を使用</li>
+                        <li><strong>新メンバーの即戦力化</strong>：環境構築の時間を削減</li>
+                        <li><strong>トラブルの減少</strong>：「私の環境では動く」問題を解決</li>
+                        <li><strong>メンテナンスの容易さ</strong>：設定ファイル一つで環境更新</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 技術の統合 -->
+            <section class="concept-card">
+                <div class="concept-header">
+                    <div class="concept-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div>
+                        <h2 class="concept-title">3つの技術の統合</h2>
+                        <p class="concept-subtitle">Docker + WSL2 + DevContainerの相乗効果</p>
+                    </div>
+                </div>
+
+                <div class="concept-content">
+                    <h3><i class="fas fa-link"></i> 技術の関係性</h3>
+                    <div class="visual-diagram">
+                        <div class="diagram-row">
+                            <div class="diagram-box" style="background: #2563eb;">Windows 11</div>
+                        </div>
+                        <div class="diagram-arrow">↓</div>
+                        <div class="diagram-row">
+                            <div class="diagram-box" style="background: #10b981;">WSL2 (Linux環境)</div>
+                        </div>
+                        <div class="diagram-arrow">↓</div>
+                        <div class="diagram-row">
+                            <div class="diagram-box" style="background: #f59e0b;">Docker (コンテナ)</div>
+                        </div>
+                        <div class="diagram-arrow">↓</div>
+                        <div class="diagram-row">
+                            <div class="diagram-box" style="background: #8b5cf6;">DevContainer (VS Code統合)</div>
+                        </div>
+                        <p>各技術が連携して理想的な開発環境を構築</p>
+                    </div>
+
+                    <h3><i class="fas fa-star"></i> 統合メリット</h3>
+                    <ul>
+                        <li><strong>Windows上でLinux開発環境</strong>：WSL2がLinux環境を提供</li>
+                        <li><strong>軽量で高速なコンテナ</strong>：Dockerが一貫した環境を保証</li>
+                        <li><strong>VS Codeとの完全統合</strong>：DevContainerが開発体験を向上</li>
+                        <li><strong>チーム開発の最適化</strong>：全員が同じ高品質な環境で開発</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 実際の開発ワークフロー -->
+            <section class="concept-card">
+                <div class="concept-header">
+                    <div class="concept-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <div>
+                        <h2 class="concept-title">実際の開発ワークフロー</h2>
+                        <p class="concept-subtitle">日常的な開発フローをイメージしよう</p>
+                    </div>
+                </div>
+
+                <div class="concept-content">
+                    <h3><i class="fas fa-play"></i> 開発開始から完了まで</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>プロジェクトクローン</h4>
+                                <p><code>git clone project-repo</code></p>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>VS Codeで開く</h4>
+                                <p><code>code .</code></p>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>DevContainer起動</h4>
+                                <p>「コンテナーで再度開く」をクリック</p>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>開発開始</h4>
+                                <p>すべての環境が自動で準備完了！</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h4><i class="fas fa-rocket"></i> 開発者の体験</h4>
+                        <p>新しいプロジェクトに参加する際、複雑な環境構築手順を読んだり、依存関係を一つずつインストールする必要がありません。VS Codeでプロジェクトを開けば、数分で全ての開発環境が自動で準備され、すぐにコーディングを開始できます。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 理解度クイズ -->
+            <section class="quiz-section">
+                <h2><i class="fas fa-question"></i> 理解度チェック</h2>
+                
+                <div class="quiz-question">
+                    <strong>Q1:</strong> Dockerの最大の利点は何ですか？
+                </div>
+                <ul class="quiz-options">
+                    <li class="quiz-option" data-answer="correct">どの環境でも同じように動作する</li>
+                    <li class="quiz-option" data-answer="incorrect">プログラムが速く動く</li>
+                    <li class="quiz-option" data-answer="incorrect">メモリ使用量が少ない</li>
+                    <li class="quiz-option" data-answer="incorrect">セキュリティが向上する</li>
+                </ul>
+
+                <div class="quiz-question">
+                    <strong>Q2:</strong> WSL2がWindows開発で重要な理由は？
+                </div>
+                <ul class="quiz-options">
+                    <li class="quiz-option" data-answer="incorrect">Windowsが高速になる</li>
+                    <li class="quiz-option" data-answer="correct">Linux環境とツールが使える</li>
+                    <li class="quiz-option" data-answer="incorrect">メモリ使用量が減る</li>
+                    <li class="quiz-option" data-answer="incorrect">バッテリーが長持ちする</li>
+                </ul>
+
+                <div class="quiz-question">
+                    <strong>Q3:</strong> DevContainerの最大のメリットは？
+                </div>
+                <ul class="quiz-options">
+                    <li class="quiz-option" data-answer="incorrect">コードが自動で書ける</li>
+                    <li class="quiz-option" data-answer="correct">チーム全員が同じ開発環境を使える</li>
+                    <li class="quiz-option" data-answer="incorrect">デバッグが不要になる</li>
+                    <li class="quiz-option" data-answer="incorrect">プログラムのバグが減る</li>
+                </ul>
+            </section>
+
+            <!-- ナビゲーション -->
+            <section class="navigation-buttons">
+                <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+                    <a href="index.html" class="nav-btn prev">
+                        <i class="fas fa-arrow-left"></i> ホームに戻る
+                    </a>
+                    <a href="setup.html" class="nav-btn next">
+                        環境準備編へ <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 DevContainer完全ガイド | 基本概念をしっかり理解して次のステップへ</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // 基本概念編専用のJavaScript
+        class ConceptsPage {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupChecklistHandlers();
+                this.setupQuizHandlers();
+                this.loadProgress();
+            }
+
+            setupChecklistHandlers() {
+                document.querySelectorAll('.checklist-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('click', (e) => {
+                        e.target.classList.toggle('checked');
+                        this.updateProgress();
+                    });
+                });
+            }
+
+            setupQuizHandlers() {
+                document.querySelectorAll('.quiz-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        const isCorrect = e.target.dataset.answer === 'correct';
+                        const siblings = e.target.parentElement.querySelectorAll('.quiz-option');
+                        
+                        siblings.forEach(sibling => {
+                            sibling.classList.remove('correct', 'incorrect');
+                            if (sibling.dataset.answer === 'correct') {
+                                sibling.classList.add('correct');
+                            } else {
+                                sibling.classList.add('incorrect');
+                            }
+                        });
+
+                        // 正解時にチェックボックスも自動でチェック
+                        if (isCorrect) {
+                            setTimeout(() => {
+                                const uncheckedBoxes = document.querySelectorAll('.checklist-checkbox:not(.checked)');
+                                if (uncheckedBoxes.length > 0) {
+                                    uncheckedBoxes[0].classList.add('checked');
+                                    this.updateProgress();
+                                }
+                            }, 1000);
+                        }
+                    });
+                });
+            }
+
+            loadProgress() {
+                const saved = localStorage.getItem('concepts-checklist');
+                if (saved) {
+                    const checkedItems = JSON.parse(saved);
+                    checkedItems.forEach(concept => {
+                        const checkbox = document.querySelector(`[data-concept="${concept}"]`);
+                        if (checkbox) {
+                            checkbox.classList.add('checked');
+                        }
+                    });
+                }
+            }
+
+            updateProgress() {
+                const checkedBoxes = document.querySelectorAll('.checklist-checkbox.checked');
+                const checkedConcepts = Array.from(checkedBoxes).map(box => box.dataset.concept);
+                
+                localStorage.setItem('concepts-checklist', JSON.stringify(checkedConcepts));
+                
+                // メインアプリの進捗を更新
+                if (window.devcontainerApp) {
+                    window.devcontainerApp.updateProgress('concepts', checkedBoxes.length);
+                }
+            }
+        }
+
+        // ページ読み込み完了時に初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            new ConceptsPage();
+        });
+    </script>
+
+    <style>
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+        }
+
+        .step-content p {
+            margin: 0;
+            color: var(--text-light);
+        }
+
+        .step-content code {
+            background: var(--surface);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .highlight-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .code-example {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .code-example pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            color: var(--text-color);
+        }
+
+        .code-example code {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+    </style>
+</body>
+</html>

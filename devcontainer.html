@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevContainer作成編 - DevContainer完全ガイド</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* DevContainer作成編専用スタイル */
+        .file-structure {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .file-structure .folder {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .file-structure .file {
+            color: var(--text-color);
+            margin-left: 20px;
+        }
+
+        .file-structure .description {
+            color: var(--text-light);
+            font-style: italic;
+            margin-left: 10px;
+        }
+
+        .config-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .config-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .config-title {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .code-editor {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .code-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-filename {
+            font-weight: 600;
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .code-button:hover {
+            background: var(--primary-hover);
+        }
+
+        .code-button.success {
+            background: var(--success);
+        }
+
+        .code-content {
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--text-color);
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .explanation-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+            border: 1px solid var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .explanation-box h4 {
+            color: var(--primary-color);
+            margin: 0 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .setting-item {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .setting-key {
+            font-family: 'Courier New', monospace;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .setting-description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .setting-example {
+            background: var(--surface);
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--text-color);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .progress-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            background: var(--text-light);
+            transition: background-color 0.3s ease;
+        }
+
+        .progress-circle.active {
+            background: var(--primary-color);
+        }
+
+        .progress-circle.completed {
+            background: var(--success);
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .progress-connector {
+            height: 2px;
+            background: var(--border);
+            flex: 1;
+            margin: 0 10px;
+            position: relative;
+            top: -20px;
+        }
+
+        .progress-connector.completed {
+            background: var(--success);
+        }
+
+        .interactive-demo {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .demo-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .demo-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .demo-content {
+            display: none;
+        }
+
+        .demo-content.active {
+            display: block;
+        }
+
+        .dependency-tree {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .dependency-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: var(--background);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .dependency-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .dependency-info h5 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-color);
+        }
+
+        .dependency-info p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .checklist-progress {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: sticky;
+            top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-cube"></i> DevContainer作成編</h1>
+            <p>設定ファイルの詳細解説と実際の作成手順</p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">ホーム</a></li>
+                    <li class="breadcrumb-separator">></li>
+                    <li class="breadcrumb-item current">DevContainer作成編</li>
+                </ol>
+            </nav>
+
+            <!-- 進捗ステップ -->
+            <section class="progress-steps">
+                <div class="progress-step">
+                    <div class="progress-circle active" id="step1">1</div>
+                    <div class="progress-label">プロジェクト構造</div>
+                </div>
+                <div class="progress-connector" id="connector1"></div>
+                <div class="progress-step">
+                    <div class="progress-circle" id="step2">2</div>
+                    <div class="progress-label">devcontainer.json</div>
+                </div>
+                <div class="progress-connector" id="connector2"></div>
+                <div class="progress-step">
+                    <div class="progress-circle" id="step3">3</div>
+                    <div class="progress-label">docker-compose.yml</div>
+                </div>
+                <div class="progress-connector" id="connector3"></div>
+                <div class="progress-step">
+                    <div class="progress-circle" id="step4">4</div>
+                    <div class="progress-label">Dockerfile</div>
+                </div>
+                <div class="progress-connector" id="connector4"></div>
+                <div class="progress-step">
+                    <div class="progress-circle" id="step5">5</div>
+                    <div class="progress-label">アプリケーション</div>
+                </div>
+                <div class="progress-connector" id="connector5"></div>
+                <div class="progress-step">
+                    <div class="progress-circle" id="step6">6</div>
+                    <div class="progress-label">起動確認</div>
+                </div>
+            </section>
+
+            <!-- チェックリスト -->
+            <aside class="checklist-progress">
+                <h3><i class="fas fa-tasks"></i> 作成チェックリスト</h3>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="project-structure"></div>
+                    <span>プロジェクト構造の理解</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="devcontainer-json"></div>
+                    <span>devcontainer.json の作成</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="docker-compose"></div>
+                    <span>docker-compose.yml の作成</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="dockerfile"></div>
+                    <span>Dockerfile の作成</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="requirements"></div>
+                    <span>requirements.txt の作成</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="package-json"></div>
+                    <span>package.json の作成</span>
+                </div>
+            </aside>
+
+            <!-- プロジェクト構造 -->
+            <section class="config-section">
+                <div class="config-header">
+                    <div class="config-icon">
+                        <i class="fas fa-folder-tree"></i>
+                    </div>
+                    <h2 class="config-title">プロジェクト構造の設計</h2>
+                </div>
+
+                <div class="explanation-box">
+                    <h4><i class="fas fa-info-circle"></i> 構造設計の重要性</h4>
+                    <p>DevContainerプロジェクトの構造は、開発効率とメンテナンス性に大きく影響します。適切な構造により、チーム全体が理解しやすく、拡張可能な開発環境を構築できます。</p>
+                </div>
+
+                <h3>最終的なディレクトリ構成</h3>
+                <div class="file-structure">
+<pre>fastapi-react-devcontainer/
+├── .devcontainer/                 <span class="description"># DevContainer設定</span>
+│   ├── devcontainer.json         <span class="description"># メイン設定ファイル</span>
+│   ├── docker-compose.yml        <span class="description"># コンテナオーケストレーション</span>
+│   └── Dockerfile                <span class="description"># カスタムイメージ定義</span>
+│
+├── backend/                       <span class="description"># Python FastAPI</span>
+│   ├── main.py                   <span class="description"># FastAPI アプリケーション</span>
+│   └── requirements.txt          <span class="description"># Python依存関係</span>
+│
+├── frontend/                      <span class="description"># React アプリケーション</span>
+│   ├── public/
+│   │   └── index.html            <span class="description"># HTML テンプレート</span>
+│   ├── src/
+│   │   ├── App.js                <span class="description"># メインコンポーネント</span>
+│   │   └── index.js              <span class="description"># エントリーポイント</span>
+│   ├── package.json              <span class="description"># Node.js依存関係</span>
+│   └── package-lock.json
+│
+└── README.md                      <span class="description"># プロジェクト説明</span></pre>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <div class="setting-key">.devcontainer/</div>
+                        <div class="setting-description">DevContainer固有の設定ファイルを格納するディレクトリ</div>
+                        <div class="setting-example">VS Codeが自動認識する特別なフォルダ</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">backend/</div>
+                        <div class="setting-description">FastAPI（Python）のバックエンドコード</div>
+                        <div class="setting-example">API エンドポイントとビジネスロジック</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">frontend/</div>
+                        <div class="setting-description">React（JavaScript）のフロントエンドコード</div>
+                        <div class="setting-example">ユーザーインターフェース</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- devcontainer.json -->
+            <section class="config-section">
+                <div class="config-header">
+                    <div class="config-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <h2 class="config-title">devcontainer.json の作成</h2>
+                </div>
+
+                <div class="explanation-box">
+                    <h4><i class="fas fa-key"></i> devcontainer.json の役割</h4>
+                    <p>DevContainerの中心となるファイルです。VS Codeにどのような開発環境を構築するかを指示する設計図として機能します。</p>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <span class="code-filename">.devcontainer/devcontainer.json</span>
+                        <div class="code-actions">
+                            <button class="code-button" onclick="copyCode(this)">コピー</button>
+                            <button class="code-button" onclick="downloadCode(this, 'devcontainer.json')">ダウンロード</button>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <pre>{
+    "name": "FastAPI + React Development",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    "shutdownAction": "stopCompose",
+    
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.black-formatter",
+                "ms-python.flake8",
+                "esbenp.prettier-vscode",
+                "bradlc.vscode-tailwindcss",
+                "ms-vscode.vscode-typescript-next"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.formatting.provider": "black",
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter"
+                }
+            }
+        }
+    },
+    
+    "forwardPorts": [8000, 3000],
+    "postCreateCommand": "cd /workspace/backend && pip install -r requirements.txt && cd /workspace/frontend && npm install",
+    "remoteUser": "vscode"
+}</pre>
+                    </div>
+                </div>
+
+                <h3>設定項目の詳細解説</h3>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <div class="setting-key">name</div>
+                        <div class="setting-description">DevContainerの表示名</div>
+                        <div class="setting-example">VS Codeのステータスバーに表示</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">dockerComposeFile</div>
+                        <div class="setting-description">使用するDocker Composeファイル</div>
+                        <div class="setting-example">複数サービスの管理</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">service</div>
+                        <div class="setting-description">メイン開発環境のサービス名</div>
+                        <div class="setting-example">docker-compose.ymlのサービス名と一致</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">workspaceFolder</div>
+                        <div class="setting-description">コンテナ内の作業ディレクトリ</div>
+                        <div class="setting-example">VS Codeが開くルートフォルダ</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">forwardPorts</div>
+                        <div class="setting-description">ローカルに転送するポート</div>
+                        <div class="setting-example">8000: FastAPI, 3000: React</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">postCreateCommand</div>
+                        <div class="setting-description">コンテナ作成後の自動実行コマンド</div>
+                        <div class="setting-example">依存関係の自動インストール</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- docker-compose.yml -->
+            <section class="config-section">
+                <div class="config-header">
+                    <div class="config-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h2 class="config-title">docker-compose.yml の作成</h2>
+                </div>
+
+                <div class="explanation-box">
+                    <h4><i class="fas fa-network-wired"></i> Docker Compose の役割</h4>
+                    <p>複数のコンテナサービスを管理し、それらの連携を定義します。将来的にデータベースやキャッシュサーバーを追加する際にも簡単に拡張できます。</p>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <span class="code-filename">.devcontainer/docker-compose.yml</span>
+                        <div class="code-actions">
+                            <button class="code-button" onclick="copyCode(this)">コピー</button>
+                            <button class="code-button" onclick="downloadCode(this, 'docker-compose.yml')">ダウンロード</button>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <pre>version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/workspace:cached
+    command: sleep infinity
+    ports:
+      - "8000:8000"
+      - "3000:3000"
+    environment:
+      - PYTHONPATH=/workspace/backend
+      - NODE_ENV=development
+    networks:
+      - devcontainer-network
+
+  # 将来的な拡張用（コメントアウト）
+  # database:
+  #   image: postgres:15
+  #   environment:
+  #     POSTGRES_DB: devdb
+  #     POSTGRES_USER: devuser
+  #     POSTGRES_PASSWORD: devpass
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - devcontainer-network
+
+networks:
+  devcontainer-network:
+    driver: bridge
+
+# volumes:
+#   postgres-data:</pre>
+                    </div>
+                </div>
+
+                <h3>Docker Compose設定の解説</h3>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <div class="setting-key">services.app</div>
+                        <div class="setting-description">メイン開発環境のサービス定義</div>
+                        <div class="setting-example">Python + Node.js環境</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">volumes</div>
+                        <div class="setting-description">ホストとコンテナ間のファイル共有</div>
+                        <div class="setting-example">cached: パフォーマンス最適化</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">command</div>
+                        <div class="setting-description">コンテナの継続実行コマンド</div>
+                        <div class="setting-example">sleep infinity: コンテナを起動状態で維持</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">environment</div>
+                        <div class="setting-description">環境変数の設定</div>
+                        <div class="setting-example">Python パスと Node.js 環境</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-key">networks</div>
+                        <div class="setting-description">コンテナ間通信の設定</div>
+                        <div class="setting-example">将来的なサービス拡張に対応</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dockerfile -->
+            <section class="config-section">
+                <div class="config-header">
+                    <div class="config-icon">
+                        <i class="fab fa-docker"></i>
+                    </div>
+                    <h2 class="config-title">Dockerfile の作成</h2>
+                </div>
+
+                <div class="explanation-box">
+                    <h4><i class="fas fa-hammer"></i> カスタムイメージの必要性</h4>
+                    <p>Python 3.11 と Node.js 18 の両方が必要なため、公式イメージをベースにカスタムイメージを作成します。開発に必要なツールもすべて含めて環境を統一します。</p>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <span class="code-filename">.devcontainer/Dockerfile</span>
+                        <div class="code-actions">
+                            <button class="code-button" onclick="copyCode(this)">コピー</button>
+                            <button class="code-button" onclick="downloadCode(this, 'Dockerfile')">ダウンロード</button>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <pre># Python 3.11をベースイメージとして使用
+FROM python:3.11-slim
+
+# 非rootユーザーの作成
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# 必要なパッケージのインストール
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Node.js 18のインストール
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# ユーザーとグループの作成
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# Python ツールのインストール
+RUN pip install --upgrade pip \
+    && pip install black flake8 pytest uvicorn
+
+# Node.js ツールのインストール
+RUN npm install -g npm@latest create-react-app
+
+# 作業ディレクトリの設定
+WORKDIR /workspace
+
+# ユーザーの切り替え
+USER $USERNAME
+
+# デフォルトシェルをbashに設定
+SHELL ["/bin/bash", "-c"]</pre>
+                    </div>
+                </div>
+
+                <h3>Dockerfile構成の解説</h3>
+                <div class="dependency-tree">
+                    <h4>構築ステップの流れ</h4>
+                    <div class="dependency-item">
+                        <div class="dependency-icon">1</div>
+                        <div class="dependency-info">
+                            <h5>ベースイメージ選択</h5>
+                            <p>Python 3.11-slim：軽量で必要最小限の Python 環境</p>
+                        </div>
+                    </div>
+                    <div class="dependency-item">
+                        <div class="dependency-icon">2</div>
+                        <div class="dependency-info">
+                            <h5>システムパッケージ</h5>
+                            <p>git, curl, build-essential など開発に必要なツール</p>
+                        </div>
+                    </div>
+                    <div class="dependency-item">
+                        <div class="dependency-icon">3</div>
+                        <div class="dependency-info">
+                            <h5>Node.js インストール</h5>
+                            <p>NodeSource リポジトリから Node.js 18 をインストール</p>
+                        </div>
+                    </div>
+                    <div class="dependency-item">
+                        <div class="dependency-icon">4</div>
+                        <div class="dependency-info">
+                            <h5>開発者用ユーザー</h5>
+                            <p>セキュリティのために非rootユーザー（vscode）を作成</p>
+                        </div>
+                    </div>
+                    <div class="dependency-item">
+                        <div class="dependency-icon">5</div>
+                        <div class="dependency-info">
+                            <h5>開発ツール</h5>
+                            <p>Python/Node.js の開発ツールをグローバルインストール</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- アプリケーション設定 -->
+            <section class="config-section">
+                <div class="config-header">
+                    <div class="config-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h2 class="config-title">アプリケーション設定ファイル</h2>
+                </div>
+
+                <div class="interactive-demo">
+                    <div class="demo-tabs">
+                        <button class="demo-tab active" onclick="showTab('requirements')">requirements.txt</button>
+                        <button class="demo-tab" onclick="showTab('package')">package.json</button>
+                        <button class="demo-tab" onclick="showTab('fastapi')">main.py</button>
+                        <button class="demo-tab" onclick="showTab('react')">React App</button>
+                    </div>
+
+                    <div id="requirements" class="demo-content active">
+                        <h4>Python 依存関係 (backend/requirements.txt)</h4>
+                        <div class="code-editor">
+                            <div class="code-header">
+                                <span class="code-filename">backend/requirements.txt</span>
+                                <div class="code-actions">
+                                    <button class="code-button" onclick="copyCode(this)">コピー</button>
+                                </div>
+                            </div>
+                            <div class="code-content">
+                                <pre># FastAPI とその関連ライブラリ
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# CORS対応
+fastapi-cors==0.0.6
+
+# 開発用ツール
+pytest==7.4.3
+black==23.11.0
+flake8==6.1.0
+
+# データ処理（将来的な拡張用）
+# pydantic==2.5.0
+# sqlalchemy==2.0.23</pre>
+                            </div>
+                        </div>
+                        <div class="explanation-box">
+                            <h4><i class="fas fa-info-circle"></i> パッケージ選択の理由</h4>
+                            <ul>
+                                <li><strong>FastAPI:</strong> 高速でモダンなWeb APIフレームワーク</li>
+                                <li><strong>Uvicorn:</strong> ASGI サーバー（本番環境でも使用可能）</li>
+                                <li><strong>開発ツール:</strong> コード品質を保つためのlinter/formatter</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="package" class="demo-content">
+                        <h4>Node.js 依存関係 (frontend/package.json)</h4>
+                        <div class="code-editor">
+                            <div class="code-header">
+                                <span class="code-filename">frontend/package.json</span>
+                                <div class="code-actions">
+                                    <button class="code-button" onclick="copyCode(this)">コピー</button>
+                                </div>
+                            </div>
+                            <div class="code-content">
+                                <pre>{
+  "name": "devcontainer-react-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "axios": "^1.6.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:8000"
+}</pre>
+                            </div>
+                        </div>
+                        <div class="explanation-box">
+                            <h4><i class="fas fa-info-circle"></i> 重要な設定項目</h4>
+                            <ul>
+                                <li><strong>proxy:</strong> API通信を localhost:8000 にプロキシ</li>
+                                <li><strong>axios:</strong> HTTP リクエスト用ライブラリ</li>
+                                <li><strong>react-scripts:</strong> Create React App のビルドツール</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="fastapi" class="demo-content">
+                        <h4>FastAPI アプリケーション (backend/main.py)</h4>
+                        <div class="code-editor">
+                            <div class="code-header">
+                                <span class="code-filename">backend/main.py</span>
+                                <div class="code-actions">
+                                    <button class="code-button" onclick="copyCode(this)">コピー</button>
+                                </div>
+                            </div>
+                            <div class="code-content">
+                                <pre>from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List
+
+app = FastAPI(title="DevContainer Demo API", version="1.0.0")
+
+# CORS設定
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# データモデル
+class Todo(BaseModel):
+    id: int
+    title: str
+    completed: bool = False
+
+# インメモリストレージ（デモ用）
+todos: List[Todo] = [
+    Todo(id=1, title="DevContainer環境を理解する", completed=True),
+    Todo(id=2, title="FastAPI + React アプリを作る", completed=False),
+    Todo(id=3, title="チーム開発環境を構築する", completed=False),
+]
+
+@app.get("/")
+async def root():
+    return {"message": "DevContainer Demo API"}
+
+@app.get("/api/todos", response_model=List[Todo])
+async def get_todos():
+    return todos
+
+@app.post("/api/todos", response_model=Todo)
+async def create_todo(todo: Todo):
+    todos.append(todo)
+    return todo
+
+@app.put("/api/todos/{todo_id}", response_model=Todo)
+async def update_todo(todo_id: int, todo: Todo):
+    for i, existing_todo in enumerate(todos):
+        if existing_todo.id == todo_id:
+            todos[i] = todo
+            return todo
+    return {"error": "Todo not found"}
+
+@app.delete("/api/todos/{todo_id}")
+async def delete_todo(todo_id: int):
+    for i, todo in enumerate(todos):
+        if todo.id == todo_id:
+            del todos[i]
+            return {"message": "Todo deleted"}
+    return {"error": "Todo not found"}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="react" class="demo-content">
+                        <h4>React アプリケーション (frontend/src/App.js)</h4>
+                        <div class="code-editor">
+                            <div class="code-header">
+                                <span class="code-filename">frontend/src/App.js</span>
+                                <div class="code-actions">
+                                    <button class="code-button" onclick="copyCode(this)">コピー</button>
+                                </div>
+                            </div>
+                            <div class="code-content">
+                                <pre>import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './App.css';
+
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  const fetchTodos = async () => {
+    try {
+      const response = await axios.get('/api/todos');
+      setTodos(response.data);
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+    }
+  };
+
+  const addTodo = async () => {
+    if (newTodo.trim()) {
+      try {
+        const newId = Math.max(...todos.map(t => t.id), 0) + 1;
+        const todo = { id: newId, title: newTodo, completed: false };
+        const response = await axios.post('/api/todos', todo);
+        setTodos([...todos, response.data]);
+        setNewTodo('');
+      } catch (error) {
+        console.error('Error adding todo:', error);
+      }
+    }
+  };
+
+  const toggleTodo = async (id) => {
+    const todo = todos.find(t => t.id === id);
+    if (todo) {
+      try {
+        const updatedTodo = { ...todo, completed: !todo.completed };
+        const response = await axios.put(`/api/todos/${id}`, updatedTodo);
+        setTodos(todos.map(t => t.id === id ? response.data : t));
+      } catch (error) {
+        console.error('Error updating todo:', error);
+      }
+    }
+  };
+
+  const deleteTodo = async (id) => {
+    try {
+      await axios.delete(`/api/todos/${id}`);
+      setTodos(todos.filter(t => t.id !== id));
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+    }
+  };
+
+  return (
+    &lt;div className="App"&gt;
+      &lt;header className="App-header"&gt;
+        &lt;h1&gt;DevContainer Demo - Todo App&lt;/h1&gt;
+        &lt;div className="todo-input"&gt;
+          &lt;input
+            type="text"
+            value={newTodo}
+            onChange={(e) =&gt; setNewTodo(e.target.value)}
+            placeholder="新しいタスクを入力..."
+            onKeyPress={(e) =&gt; e.key === 'Enter' && addTodo()}
+          /&gt;
+          &lt;button onClick={addTodo}&gt;追加&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;ul className="todo-list"&gt;
+          {todos.map(todo =&gt; (
+            &lt;li key={todo.id} className={todo.completed ? 'completed' : ''}&gt;
+              &lt;input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() =&gt; toggleTodo(todo.id)}
+              /&gt;
+              &lt;span&gt;{todo.title}&lt;/span&gt;
+              &lt;button onClick={() =&gt; deleteTodo(todo.id)}&gt;削除&lt;/button&gt;
+            &lt;/li&gt;
+          ))}
+        &lt;/ul&gt;
+      &lt;/header&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ナビゲーション -->
+            <section class="navigation-buttons">
+                <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+                    <a href="setup.html" class="nav-btn prev">
+                        <i class="fas fa-arrow-left"></i> 環境準備編へ戻る
+                    </a>
+                    <a href="practice.html" class="nav-btn next">
+                        実践編へ <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 DevContainer完全ガイド | 設定ファイルを理解して実践へ進みましょう</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // DevContainer作成編専用のJavaScript
+        class DevContainerPage {
+            constructor() {
+                this.currentStep = 1;
+                this.init();
+            }
+
+            init() {
+                this.setupTrackerHandlers();
+                this.loadProgress();
+                this.updateProgressSteps();
+            }
+
+            setupTrackerHandlers() {
+                document.querySelectorAll('.tracker-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('click', (e) => {
+                        e.target.classList.toggle('checked');
+                        this.updateProgress();
+                        this.updateProgressSteps();
+                    });
+                });
+            }
+
+            loadProgress() {
+                const saved = localStorage.getItem('devcontainer-checklist');
+                if (saved) {
+                    const checkedItems = JSON.parse(saved);
+                    checkedItems.forEach(step => {
+                        const checkbox = document.querySelector(`[data-step="${step}"]`);
+                        if (checkbox) {
+                            checkbox.classList.add('checked');
+                        }
+                    });
+                }
+            }
+
+            updateProgress() {
+                const checkedBoxes = document.querySelectorAll('.tracker-checkbox.checked');
+                const checkedSteps = Array.from(checkedBoxes).map(box => box.dataset.step);
+                
+                localStorage.setItem('devcontainer-checklist', JSON.stringify(checkedSteps));
+                
+                // メインアプリの進捗を更新
+                if (window.devcontainerApp) {
+                    window.devcontainerApp.updateProgress('devcontainer', checkedBoxes.length);
+                }
+            }
+
+            updateProgressSteps() {
+                const checkedBoxes = document.querySelectorAll('.tracker-checkbox.checked');
+                const completedCount = checkedBoxes.length;
+
+                for (let i = 1; i <= 6; i++) {
+                    const step = document.getElementById(`step${i}`);
+                    const connector = document.getElementById(`connector${i}`);
+                    
+                    if (i <= completedCount + 1) {
+                        step.classList.add('active');
+                        if (connector) connector.classList.add('completed');
+                    }
+                    
+                    if (i <= completedCount) {
+                        step.classList.add('completed');
+                        step.innerHTML = '✓';
+                    }
+                }
+            }
+        }
+
+        // タブ切り替え機能
+        function showTab(tabName) {
+            // すべてのタブとコンテンツを非表示
+            document.querySelectorAll('.demo-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.demo-content').forEach(content => content.classList.remove('active'));
+            
+            // 選択されたタブとコンテンツを表示
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // コードコピー機能
+        function copyCode(button) {
+            const codeContent = button.parentElement.nextElementSibling;
+            const code = codeContent.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'コピー済み';
+                button.classList.add('success');
+                setTimeout(() => {
+                    button.textContent = 'コピー';
+                    button.classList.remove('success');
+                }, 2000);
+            });
+        }
+
+        // ファイルダウンロード機能
+        function downloadCode(button, filename) {
+            const codeContent = button.parentElement.nextElementSibling;
+            const code = codeContent.querySelector('pre').textContent;
+            
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            button.textContent = 'ダウンロード済み';
+            button.classList.add('success');
+            setTimeout(() => {
+                button.textContent = 'ダウンロード';
+                button.classList.remove('success');
+            }, 2000);
+        }
+
+        // ページ読み込み完了時に初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            new DevContainerPage();
+        });
+    </script>
+
+    <style>
+        .tracker-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tracker-item:last-child {
+            border-bottom: none;
+        }
+
+        .tracker-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .tracker-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .tracker-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 0.7rem;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+    </style>
+</body>
+</html>

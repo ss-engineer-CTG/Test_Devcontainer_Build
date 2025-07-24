@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>実践編 - DevContainer完全ガイド</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 実践編専用スタイル */
+        .practice-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .practice-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .practice-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .practice-title {
+            font-size: 1.8rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .step-container {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .step-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .step-header:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+        }
+
+        .step-number {
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .step-toggle {
+            margin-left: auto;
+            font-size: 1.2rem;
+        }
+
+        .step-content {
+            padding: 2rem;
+            display: block;
+        }
+
+        .step-content.collapsed {
+            display: none;
+        }
+
+        .terminal-window {
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: #323233;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-button.close { background: #ff5f56; }
+        .terminal-button.minimize { background: #ffbd2e; }
+        .terminal-button.maximize { background: #27ca3f; }
+
+        .terminal-title {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+
+        .terminal-content {
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            color: #ffffff;
+            background: #1e1e1e;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+
+        .terminal-prompt {
+            color: #4a9eff;
+        }
+
+        .terminal-command {
+            color: #ffffff;
+        }
+
+        .terminal-output {
+            color: #a5a5a5;
+            margin: 0.5rem 0;
+        }
+
+        .terminal-success {
+            color: #27ca3f;
+        }
+
+        .terminal-error {
+            color: #ff5f56;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, var(--surface), var(--border));
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-light);
+        }
+
+        .screenshot-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .verification-panel {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid var(--success);
+            border-left: 4px solid var(--success);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .verification-panel h4 {
+            color: var(--success);
+            margin: 0 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: var(--background);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .checklist-checkbox.completed {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .checklist-checkbox.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .url-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .url-icon {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .url-link {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .url-link:hover {
+            text-decoration: underline;
+        }
+
+        .url-copy {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .url-copy:hover {
+            background: var(--primary-hover);
+        }
+
+        .troubleshooting-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+            border: 1px solid var(--warning);
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .troubleshooting-box h5 {
+            color: var(--warning);
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-timeline {
+            position: sticky;
+            top: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--border);
+            position: relative;
+            z-index: 2;
+            transition: background-color 0.3s ease;
+        }
+
+        .timeline-dot.active {
+            background: var(--primary-color);
+        }
+
+        .timeline-dot.completed {
+            background: var(--success);
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 24px;
+            width: 2px;
+            height: calc(100% - 12px);
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .timeline-item.completed:not(:last-child)::after {
+            background: var(--success);
+        }
+
+        .timeline-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .app-preview {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .preview-mockup {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .mockup-header {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+            border-radius: 8px 8px 0 0;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .mockup-title {
+            font-size: 1.5rem;
+            color: #2563eb;
+            margin: 0;
+            text-align: center;
+        }
+
+        .todo-input-mockup {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .todo-input-mockup input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .todo-input-mockup button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+        }
+
+        .todo-list-mockup {
+            list-style: none;
+            padding: 0;
+        }
+
+        .todo-item-mockup {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            background: #f9fafb;
+        }
+
+        .todo-item-mockup.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-code"></i> 実践編</h1>
+            <p>FastAPI + React DevContainerプロジェクトの実際の構築手順</p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">ホーム</a></li>
+                    <li class="breadcrumb-separator">></li>
+                    <li class="breadcrumb-item current">実践編</li>
+                </ol>
+            </nav>
+
+            <!-- 進捗タイムライン -->
+            <aside class="progress-timeline">
+                <h3><i class="fas fa-tasks"></i> 実践進捗</h3>
+                <div class="timeline-item" data-step="1">
+                    <div class="timeline-dot active"></div>
+                    <div class="timeline-label">プロジェクト作成</div>
+                </div>
+                <div class="timeline-item" data-step="2">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">設定ファイル作成</div>
+                </div>
+                <div class="timeline-item" data-step="3">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">VS Code起動</div>
+                </div>
+                <div class="timeline-item" data-step="4">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">DevContainer構築</div>
+                </div>
+                <div class="timeline-item" data-step="5">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">バックエンド起動</div>
+                </div>
+                <div class="timeline-item" data-step="6">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">フロントエンド起動</div>
+                </div>
+                <div class="timeline-item" data-step="7">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">動作確認</div>
+                </div>
+                <div class="timeline-item" data-step="8">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">開発ワークフロー</div>
+                </div>
+                <div class="timeline-item" data-step="9">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">チーム共有</div>
+                </div>
+                <div class="timeline-item" data-step="10">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-label">最終確認</div>
+                </div>
+            </aside>
+
+            <!-- ステップ1: プロジェクト作成 -->
+            <section class="practice-section">
+                <div class="practice-header">
+                    <div class="practice-icon">
+                        <i class="fas fa-folder-plus"></i>
+                    </div>
+                    <h2 class="practice-title">ステップ1: プロジェクトディレクトリの作成</h2>
+                </div>
+
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStep(this)">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">WSL2環境でのプロジェクト作成</h3>
+                        <div class="step-toggle">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <p>まず、WSL2のUbuntu環境でプロジェクト用のディレクトリを作成します。</p>
+                        
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">Ubuntu-22.04</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cd ~</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">mkdir fastapi-react-devcontainer</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">cd fastapi-react-devcontainer</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">pwd</span>
+<span class="terminal-output">/home/username/fastapi-react-devcontainer</span>
+                            </div>
+                        </div>
+
+                        <div class="verification-panel">
+                            <h4><i class="fas fa-check-circle"></i> 確認事項</h4>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>プロジェクトディレクトリが作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>カレントディレクトリがプロジェクトフォルダになっている</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ステップ2: ディレクトリ構造作成 -->
+            <section class="practice-section">
+                <div class="practice-header">
+                    <div class="practice-icon">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h2 class="practice-title">ステップ2: ディレクトリ構造の作成</h2>
+                </div>
+
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStep(this)">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">必要なディレクトリとファイルの作成</h3>
+                        <div class="step-toggle">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">ディレクトリ構造作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command"># DevContainer設定ディレクトリ</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">mkdir .devcontainer</span>
+
+<span class="terminal-prompt">$</span> <span class="terminal-command"># バックエンドディレクトリ</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">mkdir backend</span>
+
+<span class="terminal-prompt">$</span> <span class="terminal-command"># フロントエンドディレクトリ</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">mkdir frontend</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">mkdir frontend/src</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">mkdir frontend/public</span>
+
+<span class="terminal-prompt">$</span> <span class="terminal-command"># 構造確認</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">tree -L 2</span>
+<span class="terminal-output">.</span>
+<span class="terminal-output">├── .devcontainer/</span>
+<span class="terminal-output">├── backend/</span>
+<span class="terminal-output">└── frontend/</span>
+<span class="terminal-output">    ├── public/</span>
+<span class="terminal-output">    └── src/</span>
+                            </div>
+                        </div>
+
+                        <div class="verification-panel">
+                            <h4><i class="fas fa-check-circle"></i> 確認事項</h4>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>.devcontainer ディレクトリが作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>backend ディレクトリが作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>frontend とサブディレクトリが作成された</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ステップ3: DevContainer設定ファイル作成 -->
+            <section class="practice-section">
+                <div class="practice-header">
+                    <div class="practice-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <h2 class="practice-title">ステップ3: DevContainer設定ファイルの作成</h2>
+                </div>
+
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStep(this)">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">設定ファイルの順次作成</h3>
+                        <div class="step-toggle">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <h4>3-1. devcontainer.json の作成</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">devcontainer.json作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cat > .devcontainer/devcontainer.json << 'EOF'</span>
+<span class="terminal-output">{</span>
+<span class="terminal-output">    "name": "FastAPI + React Development",</span>
+<span class="terminal-output">    "dockerComposeFile": "docker-compose.yml",</span>
+<span class="terminal-output">    "service": "app",</span>
+<span class="terminal-output">    "workspaceFolder": "/workspace",</span>
+<span class="terminal-output">    "shutdownAction": "stopCompose",</span>
+<span class="terminal-output">    "customizations": {</span>
+<span class="terminal-output">        "vscode": {</span>
+<span class="terminal-output">            "extensions": [</span>
+<span class="terminal-output">                "ms-python.python",</span>
+<span class="terminal-output">                "ms-python.vscode-pylance",</span>
+<span class="terminal-output">                "esbenp.prettier-vscode"</span>
+<span class="terminal-output">            ]</span>
+<span class="terminal-output">        }</span>
+<span class="terminal-output">    },</span>
+<span class="terminal-output">    "forwardPorts": [8000, 3000],</span>
+<span class="terminal-output">    "postCreateCommand": "cd /workspace/backend && pip install -r requirements.txt && cd /workspace/frontend && npm install"</span>
+<span class="terminal-output">}</span>
+<span class="terminal-output">EOF</span>
+                            </div>
+                        </div>
+
+                        <h4>3-2. docker-compose.yml の作成</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">docker-compose.yml作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cat > .devcontainer/docker-compose.yml << 'EOF'</span>
+<span class="terminal-output">version: '3.8'</span>
+<span class="terminal-output">services:</span>
+<span class="terminal-output">  app:</span>
+<span class="terminal-output">    build:</span>
+<span class="terminal-output">      context: .</span>
+<span class="terminal-output">      dockerfile: Dockerfile</span>
+<span class="terminal-output">    volumes:</span>
+<span class="terminal-output">      - ../:/workspace:cached</span>
+<span class="terminal-output">    command: sleep infinity</span>
+<span class="terminal-output">    ports:</span>
+<span class="terminal-output">      - "8000:8000"</span>
+<span class="terminal-output">      - "3000:3000"</span>
+<span class="terminal-output">EOF</span>
+                            </div>
+                        </div>
+
+                        <h4>3-3. Dockerfile の作成</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">Dockerfile作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cat > .devcontainer/Dockerfile << 'EOF'</span>
+<span class="terminal-output">FROM python:3.11-slim</span>
+<span class="terminal-output">ARG USERNAME=vscode</span>
+<span class="terminal-output">ARG USER_UID=1000</span>
+<span class="terminal-output">ARG USER_GID=$USER_UID</span>
+
+<span class="terminal-output"># 必要なパッケージのインストール</span>
+<span class="terminal-output">RUN apt-get update && apt-get install -y \</span>
+<span class="terminal-output">    git curl build-essential sudo \</span>
+<span class="terminal-output">    && rm -rf /var/lib/apt/lists/*</span>
+
+<span class="terminal-output"># Node.js 18のインストール</span>
+<span class="terminal-output">RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \</span>
+<span class="terminal-output">    && apt-get install -y nodejs</span>
+
+<span class="terminal-output"># ユーザー作成</span>
+<span class="terminal-output">RUN groupadd --gid $USER_GID $USERNAME \</span>
+<span class="terminal-output">    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \</span>
+<span class="terminal-output">    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME</span>
+
+<span class="terminal-output">WORKDIR /workspace</span>
+<span class="terminal-output">USER $USERNAME</span>
+<span class="terminal-output">EOF</span>
+                            </div>
+                        </div>
+
+                        <div class="verification-panel">
+                            <h4><i class="fas fa-check-circle"></i> 確認事項</h4>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>devcontainer.json が作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>docker-compose.yml が作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>Dockerfile が作成された</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ステップ4: アプリケーションファイル作成 -->
+            <section class="practice-section">
+                <div class="practice-header">
+                    <div class="practice-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h2 class="practice-title">ステップ4: アプリケーションファイルの作成</h2>
+                </div>
+
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStep(this)">
+                        <div class="step-number">4</div>
+                        <h3 class="step-title">バックエンドとフロントエンドのコード作成</h3>
+                        <div class="step-toggle">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <h4>4-1. Python dependencies (requirements.txt)</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">requirements.txt作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cat > backend/requirements.txt << 'EOF'</span>
+<span class="terminal-output">fastapi==0.104.1</span>
+<span class="terminal-output">uvicorn[standard]==0.24.0</span>
+<span class="terminal-output">fastapi-cors==0.0.6</span>
+<span class="terminal-output">EOF</span>
+                            </div>
+                        </div>
+
+                        <h4>4-2. FastAPI アプリケーション (main.py)</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">FastAPI main.py作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cat > backend/main.py << 'EOF'</span>
+<span class="terminal-output">from fastapi import FastAPI</span>
+<span class="terminal-output">from fastapi.middleware.cors import CORSMiddleware</span>
+<span class="terminal-output">from pydantic import BaseModel</span>
+<span class="terminal-output">from typing import List</span>
+
+<span class="terminal-output">app = FastAPI(title="DevContainer Demo API")</span>
+
+<span class="terminal-output">app.add_middleware(</span>
+<span class="terminal-output">    CORSMiddleware,</span>
+<span class="terminal-output">    allow_origins=["http://localhost:3000"],</span>
+<span class="terminal-output">    allow_credentials=True,</span>
+<span class="terminal-output">    allow_methods=["*"],</span>
+<span class="terminal-output">    allow_headers=["*"],</span>
+<span class="terminal-output">)</span>
+
+<span class="terminal-output">class Todo(BaseModel):</span>
+<span class="terminal-output">    id: int</span>
+<span class="terminal-output">    title: str</span>
+<span class="terminal-output">    completed: bool = False</span>
+
+<span class="terminal-output">todos = [</span>
+<span class="terminal-output">    Todo(id=1, title="DevContainer環境を理解する", completed=True),</span>
+<span class="terminal-output">    Todo(id=2, title="FastAPI + React アプリを作る", completed=False),</span>
+<span class="terminal-output">]</span>
+
+<span class="terminal-output">@app.get("/")</span>
+<span class="terminal-output">async def root():</span>
+<span class="terminal-output">    return {"message": "DevContainer Demo API"}</span>
+
+<span class="terminal-output">@app.get("/api/todos", response_model=List[Todo])</span>
+<span class="terminal-output">async def get_todos():</span>
+<span class="terminal-output">    return todos</span>
+<span class="terminal-output">EOF</span>
+                            </div>
+                        </div>
+
+                        <h4>4-3. React package.json</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">package.json作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cat > frontend/package.json << 'EOF'</span>
+<span class="terminal-output">{</span>
+<span class="terminal-output">  "name": "devcontainer-react-frontend",</span>
+<span class="terminal-output">  "version": "0.1.0",</span>
+<span class="terminal-output">  "dependencies": {</span>
+<span class="terminal-output">    "react": "^18.2.0",</span>
+<span class="terminal-output">    "react-dom": "^18.2.0",</span>
+<span class="terminal-output">    "react-scripts": "5.0.1",</span>
+<span class="terminal-output">    "axios": "^1.6.2"</span>
+<span class="terminal-output">  },</span>
+<span class="terminal-output">  "scripts": {</span>
+<span class="terminal-output">    "start": "react-scripts start",</span>
+<span class="terminal-output">    "build": "react-scripts build"</span>
+<span class="terminal-output">  },</span>
+<span class="terminal-output">  "proxy": "http://localhost:8000"</span>
+<span class="terminal-output">}</span>
+<span class="terminal-output">EOF</span>
+                            </div>
+                        </div>
+
+                        <h4>4-4. React HTML テンプレート</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">index.html作成</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command">cat > frontend/public/index.html << 'EOF'</span>
+<span class="terminal-output">&lt;!DOCTYPE html&gt;</span>
+<span class="terminal-output">&lt;html lang="ja"&gt;</span>
+<span class="terminal-output">&lt;head&gt;</span>
+<span class="terminal-output">    &lt;meta charset="UTF-8"&gt;</span>
+<span class="terminal-output">    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span class="terminal-output">    &lt;title&gt;DevContainer Demo App&lt;/title&gt;</span>
+<span class="terminal-output">&lt;/head&gt;</span>
+<span class="terminal-output">&lt;body&gt;</span>
+<span class="terminal-output">    &lt;div id="root"&gt;&lt;/div&gt;</span>
+<span class="terminal-output">&lt;/body&gt;</span>
+<span class="terminal-output">&lt;/html&gt;</span>
+<span class="terminal-output">EOF</span>
+                            </div>
+                        </div>
+
+                        <div class="verification-panel">
+                            <h4><i class="fas fa-check-circle"></i> 確認事項</h4>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>requirements.txt が作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>FastAPI main.py が作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>React package.json が作成された</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>HTML テンプレートが作成された</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ステップ5: VS CodeでDevContainer起動 -->
+            <section class="practice-section">
+                <div class="practice-header">
+                    <div class="practice-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h2 class="practice-title">ステップ5: VS CodeでDevContainer起動</h2>
+                </div>
+
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStep(this)">
+                        <div class="step-number">5</div>
+                        <h3 class="step-title">DevContainer環境の起動と確認</h3>
+                        <div class="step-toggle">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <h4>5-1. VS Codeでプロジェクトを開く</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">VS Code起動</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">$</span> <span class="terminal-command"># 現在のディレクトリでVS Codeを開く</span>
+<span class="terminal-prompt">$</span> <span class="terminal-command">code .</span>
+<span class="terminal-output">Starting VS Code...</span>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            <i class="fas fa-desktop"></i>
+                            <h4>VS Code起動画面</h4>
+                            <p>VS Codeが開くと、右下に「フォルダに Dev Container 構成が含まれています」という通知が表示されます</p>
+                        </div>
+
+                        <h4>5-2. DevContainerで再度開く</h4>
+                        <p><strong>「コンテナーで再度開く」</strong>ボタンをクリックします。</p>
+
+                        <div class="screenshot-placeholder">
+                            <i class="fas fa-container"></i>
+                            <h4>DevContainer構築中</h4>
+                            <p>初回起動時は Docker イメージのビルドが行われます（2-5分程度）</p>
+                        </div>
+
+                        <h4>5-3. 構築完了の確認</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">DevContainer内ターミナル</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">pwd</span>
+<span class="terminal-output">/workspace</span>
+
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">python --version</span>
+<span class="terminal-output">Python 3.11.6</span>
+
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">node --version</span>
+<span class="terminal-output">v18.18.2</span>
+
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">ls -la</span>
+<span class="terminal-output">drwxr-xr-x  5 vscode vscode 4096 Nov 23 12:00 .</span>
+<span class="terminal-output">drwxr-xr-x  3 root   root   4096 Nov 23 12:00 ..</span>
+<span class="terminal-output">drwxr-xr-x  2 vscode vscode 4096 Nov 23 12:00 .devcontainer</span>
+<span class="terminal-output">drwxr-xr-x  2 vscode vscode 4096 Nov 23 12:00 backend</span>
+<span class="terminal-output">drwxr-xr-x  4 vscode vscode 4096 Nov 23 12:00 frontend</span>
+                            </div>
+                        </div>
+
+                        <div class="verification-panel">
+                            <h4><i class="fas fa-check-circle"></i> 確認事項</h4>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>VS Code左下に「Dev Container: FastAPI + React Development」と表示</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>ターミナルのプロンプトが「vscode@container:/workspace$」</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>Python 3.11とNode.js 18が利用可能</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ステップ6: アプリケーション起動 -->
+            <section class="practice-section">
+                <div class="practice-header">
+                    <div class="practice-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <h2 class="practice-title">ステップ6: アプリケーションの起動</h2>
+                </div>
+
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStep(this)">
+                        <div class="step-number">6</div>
+                        <h3 class="step-title">バックエンドとフロントエンドの起動</h3>
+                        <div class="step-toggle">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <h4>6-1. FastAPI バックエンドの起動</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">FastAPI起動</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">cd backend</span>
+<span class="terminal-prompt">vscode@container:/workspace/backend$</span> <span class="terminal-command">uvicorn main:app --host 0.0.0.0 --port 8000 --reload</span>
+<span class="terminal-success">INFO:     Will watch for changes in these directories: ['/workspace/backend']</span>
+<span class="terminal-success">INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)</span>
+<span class="terminal-success">INFO:     Started reloader process [123] using WatchFiles</span>
+<span class="terminal-success">INFO:     Started server process [456]</span>
+<span class="terminal-success">INFO:     Waiting for application startup.</span>
+<span class="terminal-success">INFO:     Application startup complete.</span>
+                            </div>
+                        </div>
+
+                        <div class="url-box">
+                            <i class="fas fa-link url-icon"></i>
+                            <a href="http://localhost:8000" class="url-link" target="_blank">http://localhost:8000</a>
+                            <button class="url-copy" onclick="copyUrl('http://localhost:8000')">コピー</button>
+                        </div>
+
+                        <div class="url-box">
+                            <i class="fas fa-book url-icon"></i>
+                            <a href="http://localhost:8000/docs" class="url-link" target="_blank">http://localhost:8000/docs (API仕様書)</a>
+                            <button class="url-copy" onclick="copyUrl('http://localhost:8000/docs')">コピー</button>
+                        </div>
+
+                        <h4>6-2. React フロントエンドの起動（新しいターミナル）</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">React起動</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">cd frontend</span>
+<span class="terminal-prompt">vscode@container:/workspace/frontend$</span> <span class="terminal-command">npm start</span>
+<span class="terminal-output">Compiled successfully!</span>
+<span class="terminal-success">Local:            http://localhost:3000</span>
+<span class="terminal-success">On Your Network:  http://172.17.0.2:3000</span>
+<span class="terminal-success">webpack compiled with 0 errors</span>
+                            </div>
+                        </div>
+
+                        <div class="url-box">
+                            <i class="fas fa-external-link-alt url-icon"></i>
+                            <a href="http://localhost:3000" class="url-link" target="_blank">http://localhost:3000 (React アプリ)</a>
+                            <button class="url-copy" onclick="copyUrl('http://localhost:3000')">コピー</button>
+                        </div>
+
+                        <div class="verification-panel">
+                            <h4><i class="fas fa-check-circle"></i> 確認事項</h4>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>FastAPIが http://localhost:8000 で起動</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>API仕様書が http://localhost:8000/docs で表示</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>Reactアプリが http://localhost:3000 で起動</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ステップ7: 動作確認 -->
+            <section class="practice-section">
+                <div class="practice-header">
+                    <div class="practice-icon">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <h2 class="practice-title">ステップ7: アプリケーション動作確認</h2>
+                </div>
+
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStep(this)">
+                        <div class="step-number">7</div>
+                        <h3 class="step-title">Todo アプリケーションの動作テスト</h3>
+                        <div class="step-toggle">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="app-preview">
+                            <div class="preview-header">
+                                <h3>完成したアプリケーションの画面イメージ</h3>
+                            </div>
+                            
+                            <div class="preview-mockup">
+                                <div class="mockup-header">
+                                    <h1 class="mockup-title">DevContainer Demo - Todo App</h1>
+                                </div>
+                                
+                                <div class="todo-input-mockup">
+                                    <input type="text" placeholder="新しいタスクを入力..." value="">
+                                    <button>追加</button>
+                                </div>
+                                
+                                <ul class="todo-list-mockup">
+                                    <li class="todo-item-mockup completed">
+                                        <input type="checkbox" checked> 
+                                        <span>DevContainer環境を理解する</span>
+                                        <button>削除</button>
+                                    </li>
+                                    <li class="todo-item-mockup">
+                                        <input type="checkbox"> 
+                                        <span>FastAPI + React アプリを作る</span>
+                                        <button>削除</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h4>7-1. API動作確認</h4>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="terminal-button close"></div>
+                                <div class="terminal-button minimize"></div>
+                                <div class="terminal-button maximize"></div>
+                                <div class="terminal-title">API テスト</div>
+                            </div>
+                            <div class="terminal-content">
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command"># API エンドポイントのテスト</span>
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">curl http://localhost:8000/</span>
+<span class="terminal-success">{"message":"DevContainer Demo API"}</span>
+
+<span class="terminal-prompt">vscode@container:/workspace$</span> <span class="terminal-command">curl http://localhost:8000/api/todos</span>
+<span class="terminal-success">[</span>
+<span class="terminal-success">  {"id":1,"title":"DevContainer環境を理解する","completed":true},</span>
+<span class="terminal-success">  {"id":2,"title":"FastAPI + React アプリを作る","completed":false}</span>
+<span class="terminal-success">]</span>
+                            </div>
+                        </div>
+
+                        <h4>7-2. フロントエンド動作確認</h4>
+                        <p>ブラウザで <code>http://localhost:3000</code> にアクセスして以下を確認してください：</p>
+
+                        <div class="verification-panel">
+                            <h4><i class="fas fa-check-circle"></i> 確認事項</h4>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>Todo一覧が表示される</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>チェックボックスで完了状態を切り替えられる</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>新しいタスクを追加できる</span>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                                <span>タスクを削除できる</span>
+                            </div>
+                        </div>
+
+                        <div class="troubleshooting-box">
+                            <h5><i class="fas fa-exclamation-triangle"></i> よくある問題</h5>
+                            <ul>
+                                <li><strong>CORS エラー:</strong> FastAPIのCORS設定を確認</li>
+                                <li><strong>API通信失敗:</strong> proxyの設定を確認</li>
+                                <li><strong>ポートが使用中:</strong> 他のプロセスを終了するか、ポート番号を変更</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ナビゲーション -->
+            <section class="navigation-buttons">
+                <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+                    <a href="devcontainer.html" class="nav-btn prev">
+                        <i class="fas fa-arrow-left"></i> DevContainer作成編へ戻る
+                    </a>
+                    <a href="claude-integration.html" class="nav-btn next">
+                        ClaudeCode統合編へ <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 DevContainer完全ガイド | 実践を通じて開発環境を完成させましょう</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // 実践編専用のJavaScript
+        class PracticePage {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupCheckboxHandlers();
+                this.loadProgress();
+                this.updateTimeline();
+            }
+
+            setupCheckboxHandlers() {
+                document.querySelectorAll('.checklist-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('click', (e) => {
+                        e.target.classList.toggle('completed');
+                        this.updateProgress();
+                        this.updateTimeline();
+                    });
+                });
+            }
+
+            loadProgress() {
+                const saved = localStorage.getItem('practice-checklist');
+                if (saved) {
+                    const completedItems = JSON.parse(saved);
+                    const checkboxes = document.querySelectorAll('.checklist-checkbox');
+                    checkboxes.forEach((checkbox, index) => {
+                        if (completedItems.includes(index)) {
+                            checkbox.classList.add('completed');
+                        }
+                    });
+                }
+            }
+
+            updateProgress() {
+                const checkboxes = document.querySelectorAll('.checklist-checkbox');
+                const completedItems = [];
+                checkboxes.forEach((checkbox, index) => {
+                    if (checkbox.classList.contains('completed')) {
+                        completedItems.push(index);
+                    }
+                });
+                
+                localStorage.setItem('practice-checklist', JSON.stringify(completedItems));
+                
+                // メインアプリの進捗を更新
+                if (window.devcontainerApp) {
+                    window.devcontainerApp.updateProgress('practice', completedItems.length);
+                }
+            }
+
+            updateTimeline() {
+                const completedCount = document.querySelectorAll('.checklist-checkbox.completed').length;
+                const totalSteps = 10;
+                const progressStep = Math.floor((completedCount / 20) * totalSteps) + 1; // 20個のチェックボックスがあると仮定
+
+                for (let i = 1; i <= totalSteps; i++) {
+                    const timelineItem = document.querySelector(`[data-step="${i}"]`);
+                    const dot = timelineItem.querySelector('.timeline-dot');
+                    
+                    if (i < progressStep) {
+                        dot.classList.add('completed');
+                        dot.classList.remove('active');
+                        timelineItem.classList.add('completed');
+                    } else if (i === progressStep) {
+                        dot.classList.add('active');
+                        dot.classList.remove('completed');
+                        timelineItem.classList.remove('completed');
+                    } else {
+                        dot.classList.remove('active', 'completed');
+                        timelineItem.classList.remove('completed');
+                    }
+                }
+            }
+        }
+
+        // ステップ折りたたみ機能
+        function toggleStep(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.step-toggle');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                toggle.textContent = '▼';
+            } else {
+                content.classList.add('collapsed');
+                toggle.textContent = '▶';
+            }
+        }
+
+        // チェックボックス切り替え
+        function toggleCheck(checkbox) {
+            checkbox.classList.toggle('completed');
+            new PracticePage().updateProgress();
+            new PracticePage().updateTimeline();
+        }
+
+        // URL コピー機能
+        function copyUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'コピー済み';
+                button.style.background = 'var(--success)';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'var(--primary-color)';
+                }, 2000);
+            });
+        }
+
+        // ページ読み込み完了時に初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            new PracticePage();
+        });
+    </script>
+
+    <style>
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+    </style>
+</body>
+</html>

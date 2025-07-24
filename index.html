@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker + WSL2 + VSCode DevContainer 完全ガイド</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <h1><i class="fab fa-docker"></i> DevContainer完全ガイド</h1>
+            <p>Docker + WSL2 + VSCode DevContainerによるモダン開発環境構築</p>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="overall-progress"></div>
+                </div>
+                <span class="progress-text" id="progress-text">進捗: 0%</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+        <div class="container">
+            <!-- 概要セクション -->
+            <section class="overview">
+                <h2><i class="fas fa-rocket"></i> このガイドについて</h2>
+                <div class="overview-grid">
+                    <div class="overview-card">
+                        <h3><i class="fas fa-users"></i> 対象読者</h3>
+                        <ul>
+                            <li>Docker・WSL初心者</li>
+                            <li>開発チームリーダー</li>
+                            <li>環境構築を統一したい方</li>
+                        </ul>
+                    </div>
+                    <div class="overview-card">
+                        <h3><i class="fas fa-target"></i> 学習目標</h3>
+                        <ul>
+                            <li>DevContainer環境の理解</li>
+                            <li>FastAPI + React の構築</li>
+                            <li>チーム開発環境の統一</li>
+                        </ul>
+                    </div>
+                    <div class="overview-card">
+                        <h3><i class="fas fa-clock"></i> 所要時間</h3>
+                        <ul>
+                            <li>基礎学習: 2-3時間</li>
+                            <li>環境構築: 1-2時間</li>
+                            <li>実践演習: 3-4時間</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学習フロー -->
+            <section class="learning-flow">
+                <h2><i class="fas fa-route"></i> 学習の流れ</h2>
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>基本概念の理解</h3>
+                            <p>Docker、WSL2、DevContainerの基礎知識を学習</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>環境準備</h3>
+                            <p>必要なソフトウェアのインストールと設定</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>実践構築</h3>
+                            <p>FastAPI + React DevContainerの作成</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ナビゲーション -->
+            <section class="navigation">
+                <h2><i class="fas fa-map"></i> 学習コンテンツ</h2>
+                <div class="nav-grid">
+                    <a href="concepts.html" class="nav-card" data-section="concepts">
+                        <div class="nav-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3>基本概念編</h3>
+                        <p>Docker・WSL2・DevContainerの基礎知識</p>
+                        <div class="nav-progress">
+                            <div class="nav-progress-bar">
+                                <div class="nav-progress-fill" data-progress="concepts"></div>
+                            </div>
+                            <span class="nav-progress-text" data-progress-text="concepts">0/5 完了</span>
+                        </div>
+                    </a>
+
+                    <a href="setup.html" class="nav-card" data-section="setup">
+                        <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                        <h3>環境準備編</h3>
+                        <p>システム要件確認とインストール手順</p>
+                        <div class="nav-progress">
+                            <div class="nav-progress-bar">
+                                <div class="nav-progress-fill" data-progress="setup"></div>
+                            </div>
+                            <span class="nav-progress-text" data-progress-text="setup">0/8 完了</span>
+                        </div>
+                    </a>
+
+                    <a href="devcontainer.html" class="nav-card" data-section="devcontainer">
+                        <div class="nav-icon"><i class="fas fa-cube"></i></div>
+                        <h3>DevContainer作成編</h3>
+                        <p>設定ファイルの詳細解説と作成</p>
+                        <div class="nav-progress">
+                            <div class="nav-progress-bar">
+                                <div class="nav-progress-fill" data-progress="devcontainer"></div>
+                            </div>
+                            <span class="nav-progress-text" data-progress-text="devcontainer">0/6 完了</span>
+                        </div>
+                    </a>
+
+                    <a href="practice.html" class="nav-card" data-section="practice">
+                        <div class="nav-icon"><i class="fas fa-code"></i></div>
+                        <h3>実践編</h3>
+                        <p>FastAPI + React プロジェクト構築</p>
+                        <div class="nav-progress">
+                            <div class="nav-progress-bar">
+                                <div class="nav-progress-fill" data-progress="practice"></div>
+                            </div>
+                            <span class="nav-progress-text" data-progress-text="practice">0/10 完了</span>
+                        </div>
+                    </a>
+
+                    <a href="claude-integration.html" class="nav-card" data-section="claude">
+                        <div class="nav-icon"><i class="fas fa-robot"></i></div>
+                        <h3>ClaudeCode統合編</h3>
+                        <p>AI開発環境の完成</p>
+                        <div class="nav-progress">
+                            <div class="nav-progress-bar">
+                                <div class="nav-progress-fill" data-progress="claude"></div>
+                            </div>
+                            <span class="nav-progress-text" data-progress-text="claude">0/4 完了</span>
+                        </div>
+                    </a>
+
+                    <a href="troubleshooting.html" class="nav-card" data-section="troubleshooting">
+                        <div class="nav-icon"><i class="fas fa-wrench"></i></div>
+                        <h3>トラブルシューティング編</h3>
+                        <p>よくある問題と解決方法</p>
+                        <div class="nav-progress">
+                            <div class="nav-progress-bar">
+                                <div class="nav-progress-fill" data-progress="troubleshooting"></div>
+                            </div>
+                            <span class="nav-progress-text" data-progress-text="troubleshooting">0/6 完了</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- クイックアクセス -->
+            <section class="quick-access">
+                <h2><i class="fas fa-star"></i> クイックアクセス</h2>
+                <div class="quick-buttons">
+                    <button class="quick-btn" onclick="resetProgress()">
+                        <i class="fas fa-refresh"></i> 進捗をリセット
+                    </button>
+                    <button class="quick-btn" onclick="exportProgress()">
+                        <i class="fas fa-download"></i> 進捗をエクスポート
+                    </button>
+                    <button class="quick-btn" onclick="toggleDarkMode()">
+                        <i class="fas fa-moon"></i> <span id="theme-toggle-text">ダークモード</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- システム要件チェック -->
+            <section class="system-check">
+                <h2><i class="fas fa-check-circle"></i> システム要件チェック</h2>
+                <div class="check-grid">
+                    <div class="check-item" id="os-check">
+                        <i class="fas fa-desktop"></i>
+                        <span>OS: Windows 10/11</span>
+                        <div class="check-status" id="os-status">確認中...</div>
+                    </div>
+                    <div class="check-item" id="wsl-check">
+                        <i class="fab fa-linux"></i>
+                        <span>WSL2対応</span>
+                        <div class="check-status" id="wsl-status">要確認</div>
+                    </div>
+                    <div class="check-item" id="docker-check">
+                        <i class="fab fa-docker"></i>
+                        <span>Docker Desktop</span>
+                        <div class="check-status" id="docker-status">要確認</div>
+                    </div>
+                    <div class="check-item" id="vscode-check">
+                        <i class="fas fa-code"></i>
+                        <span>VS Code</span>
+                        <div class="check-status" id="vscode-status">要確認</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 DevContainer完全ガイド | 学習を通じてモダンな開発環境をマスターしましょう</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

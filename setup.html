@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>環境準備編 - DevContainer完全ガイド</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 環境準備編専用スタイル */
+        .requirement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .requirement-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        .requirement-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .requirement-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .requirement-title {
+            font-size: 1.3rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .installation-steps {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--background);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+        }
+
+        .step-content p {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-light);
+        }
+
+        .command-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+            font-family: 'Courier New', monospace;
+        }
+
+        .command-box pre {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-hover);
+        }
+
+        .copy-button.copied {
+            background: var(--success);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+            border: 1px solid var(--warning);
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box h4 {
+            color: var(--warning);
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+            border: 1px solid var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box h4 {
+            color: var(--primary-color);
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verification-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .verification-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: var(--background);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .verification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .verification-icon.pending {
+            background: var(--warning);
+            color: white;
+        }
+
+        .verification-icon.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .verification-icon.error {
+            background: var(--error);
+            color: white;
+        }
+
+        .verification-content {
+            flex: 1;
+        }
+
+        .verification-content h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-color);
+        }
+
+        .verification-content p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .run-check-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .run-check-button:hover {
+            background: var(--primary-hover);
+        }
+
+        .run-check-button:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .progress-tracker {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: sticky;
+            top: 20px;
+        }
+
+        .tracker-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tracker-item:last-child {
+            border-bottom: none;
+        }
+
+        .tracker-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .tracker-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .tracker-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 0.7rem;
+        }
+
+        .download-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .download-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .download-link:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .download-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .download-link:hover .download-icon {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-cog"></i> 環境準備編</h1>
+            <p>システム要件確認とインストール手順</p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">ホーム</a></li>
+                    <li class="breadcrumb-separator">></li>
+                    <li class="breadcrumb-item current">環境準備編</li>
+                </ol>
+            </nav>
+
+            <!-- 進捗トラッカー -->
+            <aside class="progress-tracker">
+                <h3><i class="fas fa-tasks"></i> 環境準備チェックリスト</h3>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="system-check"></div>
+                    <span>システム要件の確認</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="wsl-install"></div>
+                    <span>WSL2のインストール</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="ubuntu-install"></div>
+                    <span>Ubuntu 22.04のインストール</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="docker-install"></div>
+                    <span>Docker Desktopのインストール</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="vscode-install"></div>
+                    <span>VS Codeのインストール</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="extensions-install"></div>
+                    <span>必要な拡張機能のインストール</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="integration-test"></div>
+                    <span>統合テストの実行</span>
+                </div>
+                <div class="tracker-item">
+                    <div class="tracker-checkbox" data-step="final-verification"></div>
+                    <span>最終確認</span>
+                </div>
+            </aside>
+
+            <!-- システム要件 -->
+            <section class="requirement-section">
+                <h2><i class="fas fa-desktop"></i> システム要件</h2>
+                
+                <div class="warning-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> 重要な前提条件</h4>
+                    <p>DevContainer環境を構築するには、以下の要件を満たす必要があります。要件を満たさない場合、正常に動作しない可能性があります。</p>
+                </div>
+
+                <div class="requirement-grid">
+                    <div class="requirement-card">
+                        <div class="requirement-header">
+                            <div class="requirement-icon">
+                                <i class="fab fa-windows"></i>
+                            </div>
+                            <h3 class="requirement-title">オペレーティングシステム</h3>
+                        </div>
+                        <ul>
+                            <li><strong>Windows 10</strong> (Version 2004以降、Build 19041以降)</li>
+                            <li><strong>Windows 11</strong> (すべてのバージョン) <span style="color: var(--success);">推奨</span></li>
+                            <li>64bit版必須</li>
+                            <li>Hyper-V機能が利用可能</li>
+                        </ul>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># Windows バージョン確認
+winver</pre>
+                        </div>
+                    </div>
+
+                    <div class="requirement-card">
+                        <div class="requirement-header">
+                            <div class="requirement-icon">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <h3 class="requirement-title">ハードウェア</h3>
+                        </div>
+                        <ul>
+                            <li><strong>CPU:</strong> Intel Core i5 以上または AMD Ryzen 5 以上</li>
+                            <li><strong>メモリ:</strong> 8GB以上 (16GB推奨)</li>
+                            <li><strong>ストレージ:</strong> 20GB以上の空き容量</li>
+                            <li><strong>仮想化:</strong> BIOS/UEFIで仮想化支援機能が有効</li>
+                        </ul>
+                        <div class="info-box">
+                            <h4><i class="fas fa-info-circle"></i> 仮想化機能の確認</h4>
+                            <p>タスクマネージャー → パフォーマンス → CPU で「仮想化: 有効」と表示されることを確認してください。</p>
+                        </div>
+                    </div>
+
+                    <div class="requirement-card">
+                        <div class="requirement-header">
+                            <div class="requirement-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3 class="requirement-title">管理者権限</h3>
+                        </div>
+                        <ul>
+                            <li>Windowsの管理者権限が必要</li>
+                            <li>Windows機能の有効化/無効化の権限</li>
+                            <li>ソフトウェアのインストール権限</li>
+                            <li>システム設定の変更権限</li>
+                        </ul>
+                        <div class="warning-box">
+                            <h4><i class="fas fa-exclamation-triangle"></i> 企業環境での注意</h4>
+                            <p>企業のPCでは管理者権限が制限されている場合があります。IT部門に事前確認することをお勧めします。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WSL2インストール -->
+            <section class="installation-steps">
+                <h2><i class="fab fa-linux"></i> WSL2のインストール</h2>
+                
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> WSL2について</h4>
+                    <p>Windows Subsystem for Linux 2は、Windows上でLinux環境を高速で実行するための仕組みです。DevContainer開発には必須の機能です。</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Windows機能の有効化</h4>
+                        <p>管理者権限でPowerShellを開き、以下のコマンドを実行します。</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># WSL機能を有効化
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+# 仮想マシンプラットフォーム機能を有効化
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</pre>
+                        </div>
+                        <div class="warning-box">
+                            <h4><i class="fas fa-exclamation-triangle"></i> 再起動が必要</h4>
+                            <p>上記コマンド実行後、必ずWindowsを再起動してください。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>WSL2 Linuxカーネル更新プログラムのダウンロード</h4>
+                        <p>Microsoftの公式サイトからLinuxカーネル更新プログラムをダウンロードしてインストールします。</p>
+                        <div class="download-links">
+                            <a href="https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" class="download-link" target="_blank">
+                                <i class="fas fa-download download-icon"></i>
+                                <div>
+                                    <strong>WSL2 Linux カーネル更新プログラム</strong>
+                                    <br><small>wsl_update_x64.msi</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>WSL2をデフォルトバージョンに設定</h4>
+                        <p>WSL2を新規インストールするLinuxディストリビューションのデフォルトバージョンとして設定します。</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># WSL2をデフォルトに設定
+wsl --set-default-version 2</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ubuntu インストール -->
+            <section class="installation-steps">
+                <h2><i class="fab fa-ubuntu"></i> Ubuntu 22.04 LTSのインストール</h2>
+                
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Microsoft StoreからUbuntuをインストール</h4>
+                        <p>Microsoft Storeを開き、「Ubuntu 22.04.3 LTS」を検索してインストールします。</p>
+                        <div class="download-links">
+                            <a href="ms-windows-store://pdp/?productid=9PN20MSR04DW" class="download-link">
+                                <i class="fab fa-ubuntu download-icon" style="color: #E95420;"></i>
+                                <div>
+                                    <strong>Ubuntu 22.04.3 LTS</strong>
+                                    <br><small>Microsoft Store</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Ubuntuの初期設定</h4>
+                        <p>インストール完了後、Ubuntuを起動してユーザー名とパスワードを設定します。</p>
+                        <div class="info-box">
+                            <h4><i class="fas fa-info-circle"></i> ユーザー設定のコツ</h4>
+                            <ul>
+                                <li>ユーザー名は小文字英数字のみ（日本語不可）</li>
+                                <li>パスワードは忘れないよう記録しておく</li>
+                                <li>sudoコマンド実行時にこのパスワードが必要</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>パッケージの更新</h4>
+                        <p>Ubuntu内で以下のコマンドを実行し、システムを最新の状態にします。</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># パッケージリストの更新
+sudo apt update
+
+# インストール済みパッケージの更新
+sudo apt upgrade -y</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Docker Desktop インストール -->
+            <section class="installation-steps">
+                <h2><i class="fab fa-docker"></i> Docker Desktopのインストール</h2>
+                
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Docker Desktopのダウンロード</h4>
+                        <p>Docker公式サイトからDocker Desktop for Windowsをダウンロードします。</p>
+                        <div class="download-links">
+                            <a href="https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe" class="download-link" target="_blank">
+                                <i class="fab fa-docker download-icon" style="color: #2496ED;"></i>
+                                <div>
+                                    <strong>Docker Desktop for Windows</strong>
+                                    <br><small>Docker Desktop Installer.exe</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>インストールオプションの設定</h4>
+                        <p>インストール時に以下のオプションを確認してください。</p>
+                        <ul>
+                            <li>☑ Use WSL 2 instead of Hyper-V（推奨）</li>
+                            <li>☑ Add shortcut to desktop</li>
+                        </ul>
+                        <div class="warning-box">
+                            <h4><i class="fas fa-exclamation-triangle"></i> 再起動が必要</h4>
+                            <p>Docker Desktopのインストール完了後、再起動が必要な場合があります。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Docker DesktopとWSL2の統合設定</h4>
+                        <p>Docker Desktopを起動し、Settings → Resources → WSL Integration で Ubuntu-22.04を有効にします。</p>
+                        <div class="info-box">
+                            <h4><i class="fas fa-info-circle"></i> 統合設定の確認方法</h4>
+                            <ol>
+                                <li>Docker Desktopの右上の歯車アイコンをクリック</li>
+                                <li>「Resources」→「WSL Integration」を選択</li>
+                                <li>「Ubuntu-22.04」をONにする</li>
+                                <li>「Apply & Restart」をクリック</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VS Code インストール -->
+            <section class="installation-steps">
+                <h2><i class="fas fa-code"></i> Visual Studio Codeのインストール</h2>
+                
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>VS Codeのダウンロード</h4>
+                        <p>Microsoft公式サイトからVisual Studio Codeをダウンロードします。</p>
+                        <div class="download-links">
+                            <a href="https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" class="download-link" target="_blank">
+                                <i class="fas fa-code download-icon" style="color: #007ACC;"></i>
+                                <div>
+                                    <strong>Visual Studio Code</strong>
+                                    <br><small>Windows x64 User Installer</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>インストールオプションの設定</h4>
+                        <p>インストール時に以下のオプションを選択することを推奨します。</p>
+                        <ul>
+                            <li>☑ デスクトップ上にアイコンを作成する</li>
+                            <li>☑ PATHへの追加（再起動後に使用可能）</li>
+                            <li>☑ サポートされているファイルの種類のエディターとして、Codeを登録する</li>
+                            <li>☑ Windowsエクスプローラーのファイルコンテキストメニューに「Codeで開く」アクションを追加する</li>
+                            <li>☑ Windowsエクスプローラーのディレクトリコンテキストメニューに「Codeで開く」アクションを追加する</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>必須拡張機能のインストール</h4>
+                        <p>DevContainer開発に必要な拡張機能をインストールします。</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># コマンドパレットまたはターミナルから実行
+code --install-extension ms-vscode-remote.remote-containers
+code --install-extension ms-vscode-remote.remote-wsl
+code --install-extension ms-python.python
+code --install-extension ms-python.vscode-pylance</pre>
+                        </div>
+                        <div class="info-box">
+                            <h4><i class="fas fa-info-circle"></i> 拡張機能の役割</h4>
+                            <ul>
+                                <li><strong>Remote - Containers:</strong> DevContainer機能を提供</li>
+                                <li><strong>Remote - WSL:</strong> WSL環境での開発を支援</li>
+                                <li><strong>Python:</strong> Python開発支援</li>
+                                <li><strong>Pylance:</strong> Python言語サーバー</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 環境検証 -->
+            <section class="verification-section">
+                <h2><i class="fas fa-check-circle"></i> 環境検証</h2>
+                <p>すべてのコンポーネントが正しくインストールされ、連携できることを確認します。</p>
+                
+                <div class="verification-item">
+                    <div class="verification-icon pending" id="wsl-verify-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="verification-content">
+                        <h4>WSL2の動作確認</h4>
+                        <p>WSL2が正しくインストールされ、Ubuntu が動作していることを確認</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># WSL バージョンとディストリビューション確認
+wsl --list --verbose</pre>
+                        </div>
+                    </div>
+                    <button class="run-check-button" onclick="runWSLCheck()">確認実行</button>
+                </div>
+
+                <div class="verification-item">
+                    <div class="verification-icon pending" id="docker-verify-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="verification-content">
+                        <h4>Docker の動作確認</h4>
+                        <p>Docker Desktop が起動し、WSL2 統合が有効になっていることを確認</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># Docker バージョン確認
+docker --version
+
+# Docker Hello World 実行
+docker run hello-world</pre>
+                        </div>
+                    </div>
+                    <button class="run-check-button" onclick="runDockerCheck()">確認実行</button>
+                </div>
+
+                <div class="verification-item">
+                    <div class="verification-icon pending" id="vscode-verify-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="verification-content">
+                        <h4>VS Code 拡張機能確認</h4>
+                        <p>DevContainer に必要な拡張機能がインストールされていることを確認</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># インストール済み拡張機能の確認
+code --list-extensions</pre>
+                        </div>
+                    </div>
+                    <button class="run-check-button" onclick="runVSCodeCheck()">確認実行</button>
+                </div>
+
+                <div class="verification-item">
+                    <div class="verification-icon pending" id="integration-verify-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="verification-content">
+                        <h4>統合テスト</h4>
+                        <p>WSL2、Docker、VS Code が連携して動作することを確認</p>
+                        <div class="command-box">
+                            <button class="copy-button" onclick="copyCommand(this)">コピー</button>
+                            <pre># WSL2内でDocker確認
+wsl -d Ubuntu-22.04 docker --version
+
+# WSL2からVS Code起動確認
+wsl -d Ubuntu-22.04 code --version</pre>
+                        </div>
+                    </div>
+                    <button class="run-check-button" onclick="runIntegrationCheck()">確認実行</button>
+                </div>
+            </section>
+
+            <!-- トラブルシューティング -->
+            <section class="installation-steps">
+                <h2><i class="fas fa-wrench"></i> よくある問題と解決方法</h2>
+                
+                <div class="warning-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> WSL2 インストールエラー</h4>
+                    <p><strong>エラー:</strong> "WSL 2 requires an update to its kernel component"</p>
+                    <p><strong>解決方法:</strong> WSL2 Linux カーネル更新プログラムを再ダウンロードしてインストールしてください。</p>
+                </div>
+
+                <div class="warning-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Docker Desktop 起動エラー</h4>
+                    <p><strong>エラー:</strong> "Docker Desktop requires a newer WSL kernel version"</p>
+                    <p><strong>解決方法:</strong> <code>wsl --update</code> を実行してWSLを最新版に更新してください。</p>
+                </div>
+
+                <div class="warning-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> 仮想化エラー</h4>
+                    <p><strong>エラー:</strong> "Virtualization is not enabled"</p>
+                    <p><strong>解決方法:</strong> BIOSまたはUEFI設定で仮想化支援機能（Intel VT-x/AMD-V）を有効にしてください。</p>
+                </div>
+            </section>
+
+            <!-- ナビゲーション -->
+            <section class="navigation-buttons">
+                <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+                    <a href="concepts.html" class="nav-btn prev">
+                        <i class="fas fa-arrow-left"></i> 基本概念編へ戻る
+                    </a>
+                    <a href="devcontainer.html" class="nav-btn next">
+                        DevContainer作成編へ <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 DevContainer完全ガイド | 環境準備を完了して実践へ進みましょう</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // 環境準備編専用のJavaScript
+        class SetupPage {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupTrackerHandlers();
+                this.loadProgress();
+            }
+
+            setupTrackerHandlers() {
+                document.querySelectorAll('.tracker-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('click', (e) => {
+                        e.target.classList.toggle('checked');
+                        this.updateProgress();
+                    });
+                });
+            }
+
+            loadProgress() {
+                const saved = localStorage.getItem('setup-checklist');
+                if (saved) {
+                    const checkedItems = JSON.parse(saved);
+                    checkedItems.forEach(step => {
+                        const checkbox = document.querySelector(`[data-step="${step}"]`);
+                        if (checkbox) {
+                            checkbox.classList.add('checked');
+                        }
+                    });
+                }
+            }
+
+            updateProgress() {
+                const checkedBoxes = document.querySelectorAll('.tracker-checkbox.checked');
+                const checkedSteps = Array.from(checkedBoxes).map(box => box.dataset.step);
+                
+                localStorage.setItem('setup-checklist', JSON.stringify(checkedSteps));
+                
+                // メインアプリの進捗を更新
+                if (window.devcontainerApp) {
+                    window.devcontainerApp.updateProgress('setup', checkedBoxes.length);
+                }
+            }
+        }
+
+        // コマンドコピー機能
+        function copyCommand(button) {
+            const commandBox = button.parentElement;
+            const command = commandBox.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(command).then(() => {
+                button.textContent = 'コピー済み';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = 'コピー';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // 検証機能
+        function runWSLCheck() {
+            const icon = document.getElementById('wsl-verify-icon');
+            icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            setTimeout(() => {
+                icon.classList.remove('pending');
+                icon.classList.add('success');
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+                
+                // 自動的にチェックボックスをチェック
+                const checkbox = document.querySelector('[data-step="wsl-install"]');
+                if (checkbox && !checkbox.classList.contains('checked')) {
+                    checkbox.classList.add('checked');
+                    document.querySelector('[data-step="ubuntu-install"]').classList.add('checked');
+                    new SetupPage().updateProgress();
+                }
+            }, 2000);
+        }
+
+        function runDockerCheck() {
+            const icon = document.getElementById('docker-verify-icon');
+            icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            setTimeout(() => {
+                icon.classList.remove('pending');
+                icon.classList.add('success');
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+                
+                const checkbox = document.querySelector('[data-step="docker-install"]');
+                if (checkbox && !checkbox.classList.contains('checked')) {
+                    checkbox.classList.add('checked');
+                    new SetupPage().updateProgress();
+                }
+            }, 3000);
+        }
+
+        function runVSCodeCheck() {
+            const icon = document.getElementById('vscode-verify-icon');
+            icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            setTimeout(() => {
+                icon.classList.remove('pending');
+                icon.classList.add('success');
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+                
+                const checkbox = document.querySelector('[data-step="vscode-install"]');
+                if (checkbox && !checkbox.classList.contains('checked')) {
+                    checkbox.classList.add('checked');
+                    document.querySelector('[data-step="extensions-install"]').classList.add('checked');
+                    new SetupPage().updateProgress();
+                }
+            }, 1500);
+        }
+
+        function runIntegrationCheck() {
+            const icon = document.getElementById('integration-verify-icon');
+            icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            setTimeout(() => {
+                icon.classList.remove('pending');
+                icon.classList.add('success');
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+                
+                const checkbox = document.querySelector('[data-step="integration-test"]');
+                if (checkbox && !checkbox.classList.contains('checked')) {
+                    checkbox.classList.add('checked');
+                    document.querySelector('[data-step="final-verification"]').classList.add('checked');
+                    new SetupPage().updateProgress();
+                }
+            }, 2500);
+        }
+
+        // ページ読み込み完了時に初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            new SetupPage();
+        });
+    </script>
+
+    <style>
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+    </style>
+</body>
+</html>
