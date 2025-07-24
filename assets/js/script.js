@@ -314,15 +314,15 @@ class DevContainerGuide {
         // スタイルを追加
         notification.style.cssText = `
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 1rem;
             box-shadow: 0 4px 12px var(--shadow);
-            z-index: 1000;
-            max-width: 400px;
+            z-index: 999;
+            max-width: 350px;
             transform: translateX(100%);
             transition: transform 0.3s ease;
         `;
